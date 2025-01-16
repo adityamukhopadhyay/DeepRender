@@ -32,6 +32,22 @@ def image_to_3d(image_path, output_path="output.glb"):
     # Call Trellis API
     print("Starting 3D model generation...")
     
+    # Update or add these parameters in your API call
+    params = {
+        "prompt": "highly detailed 3D model of glasses, transparent polycarbonate lenses made of glass material, metallic frames, detailed hinges and temples, professional eyewear, realistic optical properties",
+        "negative_prompt": "low quality, blurry, distorted, unrealistic materials, solid lenses",
+        "style_preset": "product",  # This helps in getting more realistic product-like results
+        "mesh_generation_parameters": {
+            "resolution": 512,  # Higher resolution for better detail
+            "material_properties": {
+                "metallic": 0.8,  # For metal frames
+                "roughness": 0.2,  # Lower roughness for shiny parts
+                "specular": 1.0,   # High specular for glass effect
+                "transmission": 0.9 # High transmission for transparent lenses
+            }
+        }
+    }
+
     # Submit the request
     handler = fal_client.submit(
         "fal-ai/trellis",
@@ -42,7 +58,8 @@ def image_to_3d(image_path, output_path="output.glb"):
             "slat_guidance_strength": 3,
             "slat_sampling_steps": 12,
             "mesh_simplify": 0.95,
-            "texture_size": 1024
+            "texture_size": 1024,
+            **params
         }
     )
     
@@ -108,4 +125,4 @@ if __name__ == "__main__":
         model_path = image_to_3d(input_image, output_file)
         print(f"Successfully created 3D model at: {model_path}")
     except Exception as e:
-        print(f"Error: {str(e)}") 
+        print(f"Error: {str(e)}")
